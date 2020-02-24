@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 
@@ -176,6 +178,17 @@ class ApolloSDK(object):
 
         return self.post(url, json=payload).json()
 
+    def delete_cluster(self, app, env, cluster_name):
+        """
+        删除集群
+        :param app:
+        :param env:
+        :param cluster_name:
+        :return:
+        """
+        url = f'{self.host}/apps/{app}/envs/{env}/clusters/{cluster_name}'
+        return self.delete(url)
+
     def create_appnamespaces(self, app, name, comment=""):
         """
         创建应用命名空间
@@ -260,6 +273,101 @@ class ApolloSDK(object):
             }
         :return:
         """
-        import json
         url = f'{self.host}/apps/{app}/envs/{env}/clusters/{cluster}/namespaces/{namespace}/item'
         return self.put(url, data=json.dumps(payload), headers=self.headers, allow_redirects=False)
+
+    def delete_item(self, app, env, cluster, namespace, item_id):
+        """
+        删除item
+        :param app:
+        :param env:
+        :param cluster:
+        :param namespace:
+        :param item_id
+        :return:
+        """
+        url = f'{self.host}/apps/{app}/envs/{env}/clusters/{cluster}/namespaces/{namespace}/items/{item_id}'
+        return self.delete(url)
+
+    # 同步配置
+    def diff_namespace(self, namespace, sync_to_namespaces, sync_items):
+        """
+        修改item
+        :param namespace: 源命名空间
+        :param sync_to_namespaces:集群信息中加入"env":"DEV" "checked":True, "clusterName":"", "namespaceName": ""
+        :param sync_items: 选中的需要同步的item并加入"checked":True
+        :return:
+        """
+        url = f'{self.host}/namespaces/{namespace}/diff'
+        payload = {
+            'syncToNamespaces': sync_to_namespaces,
+            'syncItems': sync_items,
+        }
+        return self.post(url, json=payload).json()
+
+    def sync_app_namespace(self, app, namespace, sync_to_namespaces, sync_items):
+        """
+        同步应用命名空间配置
+        :param app: 应用
+        :param namespace: 源命名空间
+        :param sync_to_namespaces: 集群信息中加入"env":"DEV" "checked":True, "clusterName":"", "namespaceName": ""
+        :param sync_items: 选中的需要同步的item，并加入"checked":True
+        :return:
+        """
+        url = f'{self.host}/apps/{app}/namespaces/{namespace}/items'
+        payload = {
+            'syncToNamespaces': sync_to_namespaces,
+            'syncItems': sync_items,
+        }
+        return self.put(url, json=payload, headers=self.headers)
+
+    def copy_cluster(self, app, new_env, new_name, old_env, old_name):
+        """
+        复制集群
+        :param app:
+        :param new_env:
+        :param new_name:
+        :param old_env:
+        :param old_name:
+        :return:
+        """
+        new_cluster_res = self.create_cluster(app, new_env, new_name)
+        old_namespaces = self.get_namespaces(app, old_env, old_name)
+        for old_namespace in old_namespaces:
+            old_namespace_name = old_namespace['baseInfo']['namespaceName']
+            old_items = self.get_namespace_item(app, old_env, old_name, old_namespace_name)
+            new_cluster_res.update({
+                'env': new_env,
+                'clusterName': new_name,
+                'namespaceName': old_namespace_name,
+                'checked': True,
+            })
+            for item in old_items:
+                item['checked'] = True
+            self.sync_app_namespace(app, old_namespace_name, [new_cluster_res], old_items)
+        return {}
+
+    def release_compare(self, env, base_release_id, to_compare_release_id):
+        """
+        版本比较
+        :param env:
+        :param base_release_id:
+        :param to_compare_release_id:
+        :return:
+        """
+        url = f'{self.host}/envs/{env}/releases/compare'
+        params = {
+            'baseReleaseId': base_release_id,
+            'toCompareReleaseId': to_compare_release_id,
+        }
+        return self.get(url, params=params).json()
+
+    def release_rollback(self, env, release_id):
+        """
+        版本回滚
+        :param env: 环境
+        :param release_id: 回滚版本id
+        :return:
+        """
+        url = f'{self.host}envs/{env}/releases/{release_id}/rollback'
+        return self.put(url)

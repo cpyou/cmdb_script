@@ -14,8 +14,8 @@ def query(data):
     from aliyunsdkslb.request.v20140515 import DescribeLoadBalancerAttributeRequest
     request = DescribeLoadBalancerAttributeRequest.DescribeLoadBalancerAttributeRequest()
 
-    from aliyunsdkslb.request.v20140515 import DescribeVServerGroupsRequest
-    request = DescribeVServerGroupsRequest.DescribeVServerGroupsRequest()
+    # from aliyunsdkslb.request.v20140515 import DescribeVServerGroupsRequest
+    # request = DescribeVServerGroupsRequest.DescribeVServerGroupsRequest()
 
     # from aliyunsdkslb.request.v20140515 import DescribeVServerGroupAttributeRequest
     # request = DescribeVServerGroupAttributeRequest.DescribeVServerGroupAttributeRequest()
@@ -37,7 +37,7 @@ def query(data):
 
 def main():
     data = {
-        'LoadBalancerId': 'lb-bp1tv9b7gbhu744gdxjt2'
+        'LoadBalancerId': ''
     }
     result = query(data)
 

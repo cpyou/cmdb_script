@@ -27,7 +27,7 @@ def query(data):
 
 def main():
     data = {
-        # 'LoadBalancerId': 'lb-2zeevpgyf994u25fhq2h1'
+        'LoadBalancerId': ''
     }
     result = query(data)
     print('')

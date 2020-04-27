@@ -1,13 +1,13 @@
 import json
-import config
+from conf import aliyun_conf
 
 
 def query(data):
     from aliyunsdkcore.client import AcsClient
     # 公司测试key
-    access_key_id = config.AccessKeyID
-    access_key_secret = config.AccessKeySecret
-    region_id = config.region_id
+    access_key_id = aliyun_conf.AccessKeyID
+    access_key_secret = aliyun_conf.AccessKeySecret
+    region_id = aliyun_conf.region_id
     client = AcsClient(access_key_id, access_key_secret, region_id)
 
     from aliyunsdkvpc.request.v20160428 import DescribeEipAddressesRequest

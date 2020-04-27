@@ -292,7 +292,7 @@ class ApolloSDK(object):
     # 同步配置
     def diff_namespace(self, namespace, sync_to_namespaces, sync_items):
         """
-        修改item
+        对比命名空间指定items
         :param namespace: 源命名空间
         :param sync_to_namespaces:集群信息中加入"env":"DEV" "checked":True, "clusterName":"", "namespaceName": ""
         :param sync_items: 选中的需要同步的item并加入"checked":True

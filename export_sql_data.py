@@ -4,12 +4,13 @@
 import psycopg2
 import xlsxwriter
 
+from conf import db_conf
 
-host = '127.0.0.1'
-user = 'chenpuyu'
-password = ''
-database = 'ops_db'
-port = 5432
+host = db_conf.host
+user = db_conf.user
+password = db_conf.password
+database = db_conf.database
+port = db_conf.port
 
 filename = '项目成员.xlsx'
 conn = psycopg2.connect(host=host, port=port, user=user, password=password, database=database)

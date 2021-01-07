@@ -9,7 +9,7 @@ aliyun-python-sdk-vpc==3.0.9
 ansible==2.8.2
 jwcrypto===0.6.0
 ldap3==2.6.1
-lxml==4.5.0
+lxml==4.6.2
 oss2==2.9.0
 pandas==0.24.2
 pycryptodome==3.9.0
